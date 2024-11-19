@@ -60,4 +60,40 @@ Testing for homogeneity of a Poisson process}}
 \section{Introduction}
 
 
+\section{Brouillon}
+
+
+Soit $(N_t)_t$ un processus de Poisson inhomogène de taux $\lambda(t)$, $t \in \mathbb{R}$. \\
+
+On observe ce processus sur un intervalle $[0, T^*]$, $T^* > 0$. \\
+Soit $n = N_{T^*}$ le nombre d'événements observés. \\
+Soit $0 < T_1 < T_2 < \ldots < T_n < T^*$ les instants des événements observés. \\
+
+\underline{Test de Laplace} : \\
+On teste l'hypothèse $H_0 : \lambda(t) = \lambda_0$ pour tout $t \in [0, T^*]$. \\
+contre \\
+$H_1 : \lambda$ croissante sur $[0, T^*]$. \\
+
+Stat de test :
+$$
+L = \sum_{i=1}^n \frac{T_i}{T^*}
+$$
+
+\textbf{Conditional distribution} : \\
+Let $N$ be a homogeneous Poisson process with rate $\lambda > 0$
+and fix $t > 0$. Let $n \in \mathbb{N}^*$.
+Given that $N_t = n$, the $n$ first arrival times $(T_1, \ldots, T_n)$ have the same distribution as the order statistic corresponding to $n$ independent random variables uniformly distributed on the interval $[0, t]$,
+that is : \\
+$$
+(T_1, T_2, \ldots, T_n)|{N_t = n} \overset{d}{=} (U_{(1)}, U_{(2)}, \ldots, U_{(n)}) \quad \text{where} \quad U_1, \ldots, U_n \text{ i.i.d} \sim U([0, t])
+$$ \\
+
+Sous $H_0$, les variables aléatoires $\frac{T_i}{T^*}$ sont i.i.d et ont la même distribution que la statistique d'ordre correspondant à $n$ variables aléatoires uniformément distribuées sur $[0, 1]$. \\
+Donc sous $H_0$, $L \xrightarrow[n \to \infty]{\mathcal{L}} \mathcal{N}(0, 1)$ (théorème de la limite centrale). \\
+
+H0 : $\beta = 0$ contre H1 : $\beta > 0$ \\
+pour $\lambda(t) = \alpha e^{\beta t}$, 
+
+
+
 \end{document}
