@@ -1,99 +1,90 @@
-\documentclass[12pt,a4paper]{article}
-\usepackage[utf8]{inputenc} 
-\usepackage[T1]{fontenc}		       
-\usepackage{lmodern}			       
-\usepackage{babel}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
-\usepackage{graphicx}
-\usepackage{xcolor}
-\usepackage{mathtools}
-\usepackage{fancyhdr}
-\usepackage{enumitem}
-\usepackage{tcolorbox}
-\usepackage{stmaryrd}
-\usepackage{dsfont}
-\usepackage{pgf, tikz}
-\usetikzlibrary{shapes.misc}
-\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
-\usepackage[text={15cm,24.5cm},centering]{geometry}
+\documentclass{journalstyle}
 
 
-% Définir la fonction pour créer une boîte de code
-\newcommand{\code}[1]{%
-    \begin{tcolorbox}[colback=black!10!white,colframe=black]
-        #1
-    \end{tcolorbox}
-}
 
+
+\title{Tests for an Increasing Trend in the Intensity of a Poisson Process: A Power Study}
+\author{Maxime Baba, Mathile Ferrera, Félix Foucher de Brandois}
+\newcommand{\footertext}{Formation ModIA - INSA, 5$^{\text{th}}$ year \\ 2024-2025}
 
 \begin{document}
 
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=5cm]{src/inp_n7.png}
-    \hfill
-    \includegraphics[width=3.8cm]{src/insa_toulouse.png}
-\end{figure}
-
-
-\title{\vspace{4cm} \textbf{Rapport BE : \\ 
-Testing for homogeneity of a Poisson process}}
-
-\author{by Maxime Baba, \\
-        Mathilde Fererra, \\
-        and Felix Foucher de Brandois}
-        
-\date{\vfill Formation ModIA - INSA, 5$^{th}$ year \\
-2024-2025}
 
 \maketitle
 
-\newpage
-\tableofcontents
-\listoffigures
+%\tableofcontents
+%\listoffigures
 
-\newpage
 
 
 \section{Introduction}
 
+A Nonhomogeneous Poisson Process (NHPP) is a stochastic process often used to model phenomena where the rate of occurrence of events changes over time.
+The rate, or intensity function $\lambda(t)$, represents the expected number of events per unit time at a given time $t$.
+Understanding and analyzing the behavior of this rate is crucial in diverse fields such as reliability engineering, healthcare, and environmental studies, as it helps identify patterns, predict future events, and optimize interventions.
+Detecting increasing trends in the rate can be particularly important, for example, in monitoring system deterioration or identifying escalating risks in processes.
+Over the years, a variety of statistical methods have been proposed to identify increasing trends in NHPPs.
+This study aims to extend the work of Bain, Engelhardt, and Wright \cite{BainEngelhardtWright} by providing a detailed theoretical and practical exploration of the Laplace test and Boswell’s likelihood ratio test.
+The paper is structured in two main parts: a presentation of the selected tests, including their theoretical basis and simulated performance comparisons, and a practical application to real-world data.
 
-\section{Brouillon}
+
+\section{Presentation of the Tests}
+
+Explication du principe de test : $H_0$ contre $H_1$.
+
+\subsection{Laplace Test}
+
+Présentation du principe général du test de Laplace.
+
+\subsubsection{Theoretical Basis}
+
+Let $(N(t))_{t \geq 0}$ be a Poisson process with intensity function $\lambda(t)$.
+We observe $N(t)$ in the interval $[0, T^*]$.
+Let $0 < T_1 < T_2 < \ldots < T_n < T^*$ be the ordered observation times.
+
+\noindent\underline{Hypotheses} \\
+$H_0$ : $\lambda(\cdot)$ is constant versus
+$H_1$ : $\lambda(\cdot)$ is increasing.
+
+\noindent\underline{Test Statistic} \\
+Let $F = \frac{1}{T^*} \sum_{i=1}^n T_i$. \\
+Under $H_0$, $(T_1, \ldots, T_n) | \{N_{T^*} = n\} \overset{(d)}{=} (U_1, \ldots, U_n)$, where $U_1, \ldots, U_n \underset{i.i.d.}{\sim} \mathcal{U}([0, T^*])$. \\
+Therefore, $(\frac{T_1}{T^*}, \ldots, \frac{T_n}{T^*}) | \{N_{T^*} = n\} \overset{(d)}{=} (V_1, \ldots, V_n)$, where $V_1, \ldots, V_n \underset{i.i.d.}{\sim} \mathcal{U}([0, 1])$. \\
+According to the central limit theorem, we have :
+\[
+\sqrt{n} \left( \frac{F}{T^*} - \frac{1}{2} \right) \xrightarrow[n \to \infty]{(d)} \mathcal{N}(0, \frac{1}{12})
+\]
 
 
-Soit $(N_t)_t$ un processus de Poisson inhomogène de taux $\lambda(t)$, $t \in \mathbb{R}$. \\
 
-On observe ce processus sur un intervalle $[0, T^*]$, $T^* > 0$. \\
-Soit $n = N_{T^*}$ le nombre d'événements observés. \\
-Soit $0 < T_1 < T_2 < \ldots < T_n < T^*$ les instants des événements observés. \\
+\subsubsection{Implementation}
 
-\underline{Test de Laplace} : \\
-On teste l'hypothèse $H_0 : \lambda(t) = \lambda_0$ pour tout $t \in [0, T^*]$. \\
-contre \\
-$H_1 : \lambda$ croissante sur $[0, T^*]$. \\
 
-Stat de test :
-$$
-L = \sum_{i=1}^n \frac{T_i}{T^*}
-$$
+\subsection{Boswell's Likelihood Ratio Test}
 
-\textbf{Conditional distribution} : \\
-Let $N$ be a homogeneous Poisson process with rate $\lambda > 0$
-and fix $t > 0$. Let $n \in \mathbb{N}^*$.
-Given that $N_t = n$, the $n$ first arrival times $(T_1, \ldots, T_n)$ have the same distribution as the order statistic corresponding to $n$ independent random variables uniformly distributed on the interval $[0, t]$,
-that is : \\
-$$
-(T_1, T_2, \ldots, T_n)|{N_t = n} \overset{d}{=} (U_{(1)}, U_{(2)}, \ldots, U_{(n)}) \quad \text{where} \quad U_1, \ldots, U_n \text{ i.i.d} \sim U([0, t])
-$$ \\
+\subsubsection{Theoretical Basis}
 
-Sous $H_0$, les variables aléatoires $\frac{T_i}{T^*}$ sont i.i.d et ont la même distribution que la statistique d'ordre correspondant à $n$ variables aléatoires uniformément distribuées sur $[0, 1]$. \\
-Donc sous $H_0$, $L \xrightarrow[n \to \infty]{\mathcal{L}} \mathcal{N}(0, 1)$ (théorème de la limite centrale). \\
+\subsubsection{Implementation}
 
-H0 : $\beta = 0$ contre H1 : $\beta > 0$ \\
-pour $\lambda(t) = \alpha e^{\beta t}$, 
 
+\section{Application to Real-World Data}
+
+\subsection{Application Scenario}
+
+\subsection{Power comparison}
+
+\subsection{Analysis of the Results}
+
+
+
+
+\section{Conclusion}
+Ceci est une citation \cite{smith2020example}.
+
+\newpage sqd
+
+
+\printbibliography
 
 
 \end{document}
