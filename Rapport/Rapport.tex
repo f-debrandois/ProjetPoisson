@@ -17,7 +17,7 @@
 
 
 
-\section{Introduction}
+\section*{Introduction}
 
 A Nonhomogeneous Poisson Process (NHPP) is a stochastic process often used to model phenomena where the rate of occurrence of events changes over time.
 The rate, or intensity function $\lambda(t)$, represents the expected number of events per unit time at a given time $t$.
@@ -27,14 +27,20 @@ Over the years, a variety of statistical methods have been proposed to identify 
 This study aims to extend the work of Bain, Engelhardt, and Wright \cite{BainEngelhardtWright} by providing a detailed theoretical and practical exploration of the Laplace test and Boswell’s likelihood ratio test.
 The paper is structured in two main parts: a presentation of the selected tests, including their theoretical basis and simulated performance comparisons, and a practical application to real-world data.
 
+\textit{Changes to be made:}
+\begin{itemize}
+    \item Ordre de présentation de l'article
+    \item Source sur les exemples (healthcare, ...)
+\end{itemize}
 
 \section{Presentation of the Tests}
 
-Explication du principe de test : $H_0$ contre $H_1$.
+A statistical test evaluates two competing hypotheses: the null hypothesis $H_0$ (representing the status quo) and the alternative hypothesis $H_1$ (indicating a deviation from $H_0$).
+Based on the sample data, a test statistic is computed and compared to a critical threshold.
+If the test statistic exceeds this threshold, $H_0$ is rejected in favor of $H_1$. \\
+In our case, we test whether the intensity function $\lambda(t)$ of a Poisson process is constant ($H_0$) or increasing ($H_1$).
 
 \subsection{Laplace Test}
-
-Présentation du principe général du test de Laplace.
 
 \subsubsection{Theoretical Basis}
 
@@ -42,19 +48,37 @@ Let $(N(t))_{t \geq 0}$ be a Poisson process with intensity function $\lambda(t)
 We observe $N(t)$ in the interval $[0, T^*]$.
 Let $0 < T_1 < T_2 < \ldots < T_n < T^*$ be the ordered observation times.
 
-\noindent\underline{Hypotheses} \\
-$H_0$ : $\lambda(\cdot)$ is constant versus
-$H_1$ : $\lambda(\cdot)$ is increasing.
-
-\noindent\underline{Test Statistic} \\
-Let $F = \frac{1}{T^*} \sum_{i=1}^n T_i$. \\
-Under $H_0$, $(T_1, \ldots, T_n) | \{N_{T^*} = n\} \overset{(d)}{=} (U_1, \ldots, U_n)$, where $U_1, \ldots, U_n \underset{i.i.d.}{\sim} \mathcal{U}([0, T^*])$. \\
+\noindent\textbf{Test Statistic} \\
+Under $H_0$, the arrival times $T_1, \ldots, T_n$ (conditioned on $N_{T^*} = n$) behave like order statistics from a uniform distribution.
+Specifically: \\
+$(T_1, \ldots, T_n) | \{N_{T^*} = n\} \overset{(d)}{=} (U_1, \ldots, U_n)$, where $U_1, \ldots, U_n \underset{i.i.d.}{\sim} \mathcal{U}([0, T^*])$. \\
 Therefore, $(\frac{T_1}{T^*}, \ldots, \frac{T_n}{T^*}) | \{N_{T^*} = n\} \overset{(d)}{=} (V_1, \ldots, V_n)$, where $V_1, \ldots, V_n \underset{i.i.d.}{\sim} \mathcal{U}([0, 1])$. \\
-According to the central limit theorem, we have :
-\[
-\sqrt{n} \left( \frac{F}{T^*} - \frac{1}{2} \right) \xrightarrow[n \to \infty]{(d)} \mathcal{N}(0, \frac{1}{12})
-\]
+Define the Laplace test statistic as: 
+\begin{equation}
+    F = \frac{1}{T^*} \sum_{i=1}^n T_i.
+    \label{eq:laplace_test_statistic}
+\end{equation}
 
+By the Central Limit Theorem, under $H_0$,  can be standardized as: 
+$Z = \frac{F - \mathbb{E}[F]}{\sqrt{\text{Var}(F)}} = \frac{F - \frac{n}{2}}{\sqrt{\frac{n}{12}}} \sim \mathcal{N}(0, 1)$
+for large $n$.
+
+\noindent\textbf{Decision Rule} \\
+If the intensity $\lambda(t)$ is increasing, the arrival times $T_i$ are expected to cluster towards the end of the interval $[0, T^*]$, making $F$ larger.
+Therefore, we reject $H_0$ if $F \geq s_{\alpha}$, where $s_{\alpha}$ is the critical threshold determined as: $s_{\alpha} = \frac{n}{2} + z_{1 - \alpha} \sqrt{\frac{n}{12}}$. \\
+with $z_{1 - \alpha}$ being the $(1 - \alpha)$-th quantile of the standard normal distribution.
+
+\noindent\textbf{Type I Error} \\
+$e_1 = \mathbb{P}_{H_0}(F \geq s_{\alpha}) = \mathbb{P}(Z \geq z_{1 - \alpha}) = \alpha$.
+
+\noindent\textbf{P-value} \\
+The p-value measures the probability of obtaining a test statistic at least as extreme as the observed $F_{\text{obs}}$, under $H_0$.
+It is given by: \\
+$\hat{\alpha} = \mathbb{P}_{H_0}(F \geq F_{\text{obs}}) = 1 - \Phi(\frac{F_{\text{obs}} - \frac{n}{2}}{\sqrt{\frac{n}{12}}})$.
+
+\noindent\textbf{Power} \\
+The power of the test is the probability of rejecting $H_0$ when $H_1$ is true. \\
+$\pi(\lambda) = \mathbb{P}_{H_1}(F \geq s_{\alpha})$.
 
 
 \subsubsection{Implementation}
@@ -75,13 +99,13 @@ According to the central limit theorem, we have :
 
 \subsection{Analysis of the Results}
 
+\newpage qsd
 
 
 
 \section{Conclusion}
 Ceci est une citation \cite{smith2020example}.
 
-\newpage sqd
 
 
 \printbibliography

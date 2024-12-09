@@ -49,7 +49,7 @@
 \renewcommand{\maketitle}{
     \noindent
     \thispagestyle{empty}
-    
+
     % Logos and title in one row
     \begin{minipage}[t]{0.3\textwidth} % Left side: Logos
         \includegraphics[height=0.8cm]{src/inp_n7.png} \\[0.5cm]
@@ -59,23 +59,20 @@
     \begin{minipage}[t]{0.7\textwidth} % Right side: Title
         {\raggedleft\huge\bfseries\@title\par} % Dynamically fetches title
     \end{minipage}
-    
+
     \vspace{1cm} % Space between logos/title and authors
-    
+
     % Authors aligned to the left
     {\large\bfseries\@author\par} % Dynamically fetches authors
-    
+
     \vspace{0.5cm} % Space before horizontal line
-    
+
     % Horizontal line
     \hrule
-    
 
     \begin{multicols}{2}
     
     \vspace{1cm} % Space after horizontal line
-
-    
 }
 
 

@@ -51,3 +51,8 @@
 - Critical analysis of the result
 - Openings : future studies, implications, etc.
 
+
+
+Cox (1955) discussed the use of this test for testing ,B = 0 versus ,B > 0 
+in lamda(t) = aexp(Bt). Applying theorem 3 of Lehmann (1959, p. 136), this test can be shown to be uniformly most unbiased (UMPU) in this parametric setting.
+Bartholomew (1956) gave an expression for its power (also see Bates 1955) and showed that it compares favorably with the one-sided Kolmogorov-Smirnov test. Ascher and Feingold (1978) further discussed its use in the study of repairable systems.
