@@ -1,0 +1,78 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+
+```{r simulPPh,eval=FALSE}
+simulPPh <- function(lambda,Tmax)
+{
+  N_Tmax <- rpois(1, lambda*Tmax)
+  return(sort(runif(N_Tmax, 0, Tmax)))
+}
+
+simulPPi = function(lambda_fct,Tmax,M)
+{
+  pph = simulPPh(M,Tmax)
+  
+  n = length(pph)
+  u = runif(n, 0, M)
+  
+  t <- c()
+  
+  for (i in 1:n) {
+    
+    if (u[i] <= lambda_fct(pph[i])) {
+      t <- c(t, pph[i])
+    }
+  }
+  
+  return(sort(t))
+}
+```
+
+
+```{r,eval=FALSE}
+# Simulation and plot of a homogeneous Poisson process:
+Tmax = 2.0
+lambda=0.5
+PPh = simulPPh(lambda, Tmax)
+L = sum(PPh) / Tmax
+n = length(PPh)
+
+Zobs = sqrt(12/n) * (L - n/2)
+z_alpha = qnorm(1 - 0.05)
+
+print(Zobs)
+print(z_alpha)
+
+if (Zobs < z_alpha)
+  print("On ne rejette pas H0 au risque alpha, donc nous sommes sûrs à 95% que c'est un processus de poisson homogène")
+
+```
+
+
+```{r}
+lambda_fct1 <- function(x){return(2*x)}
+
+Tmax = 10
+M1 = 20
+PPi = simulPPi(lambda_fct1, Tmax, M1)
+L = sum(PPi) / Tmax
+
+Zobs = sqrt(12/n) * (L - n/2)
+z_alpha = qnorm(1 - 0.05)
+
+print(Zobs)
+print(z_alpha)
+
+if (Zobs >= z_alpha)
+  print("On rejette H0 au risque alpha, donc nous sommes sûrs à 95% que c'est un processus de poisson inhomogène")
+```
+
+
+
