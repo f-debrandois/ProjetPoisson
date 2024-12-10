@@ -17,7 +17,7 @@
 
 
 
-\section*{Introduction}
+%\section*{Introduction}
 
 A Nonhomogeneous Poisson Process (NHPP) is a stochastic process often used to model phenomena where the rate of occurrence of events changes over time.
 The rate, or intensity function $\lambda(t)$, represents the expected number of events per unit time at a given time $t$.
@@ -33,7 +33,7 @@ The paper is structured in two main parts: a presentation of the selected tests,
     \item Source sur les exemples (healthcare, ...)
 \end{itemize}
 
-\section{Presentation of the Tests}
+\section{Theoretical Framework for Trend Detection Tests}
 
 A statistical test evaluates two competing hypotheses: the null hypothesis $H_0$ (representing the status quo) and the alternative hypothesis $H_1$ (indicating a deviation from $H_0$).
 Based on the sample data, a test statistic is computed and compared to a critical threshold.
@@ -78,26 +78,46 @@ $\hat{\alpha} = \mathbb{P}_{H_0}(F \geq F_{\text{obs}}) = 1 - \Phi(\frac{F_{\tex
 
 \noindent\textbf{Power} \\
 The power of the test is the probability of rejecting $H_0$ when $H_1$ is true. \\
-$\pi(\lambda) = \mathbb{P}_{H_1}(F \geq s_{\alpha})$.
-
-
-\subsubsection{Implementation}
+$\pi(\lambda) = \mathbb{P}_{H_1}(F \geq s_{\alpha})
 
 
 \subsection{Boswell's Likelihood Ratio Test}
 
 \subsubsection{Theoretical Basis}
 
-\subsubsection{Implementation}
 
+\section{Numerical Simulations}
+
+\subsection{Simulation Methodology}
+
+Generating simulated data : \\
+Multiple rates functions...
+
+\subsection{Power Analysis}
+Calculation of the power of the Laplace and Boswell tests under different conditions (e.g., exponential, Weibull, and step-function trends). \\
+
+Visualization of power curves to compare test effectiveness. \\
+
+Discussion of factors influencing the power of each test (sample size, intensity function shape, etc.). \\
+
+Insights into when to prefer one test over the other.
 
 \section{Application to Real-World Data}
 
-\subsection{Application Scenario}
+\subsection{Description of the Dataset}
+Danish Fire Insurance Claims. \\
+Overview of the dataset containing large fire insurance claims in Denmark from 1980 to 1990. \\
+Explanation of how the event times are extracted and processed.
 
-\subsection{Power comparison}
+\subsection{Applying the Tests}
+Presentation of test statistics, p-values, and decisions. \\
 
-\subsection{Analysis of the Results}
+\subsection{Results and Discussion}
+Analysis of Findings. \\
+Interpretation of the results and their implications for the intensity of fire insurance claims. \\
+Discussion of whether an increasing trend is detected and its significance. \\
+Comparison with Simulated Results. \\
+Reflecting on how real-world results compare to the numerical simulations.
 
 \newpage qsd
 
