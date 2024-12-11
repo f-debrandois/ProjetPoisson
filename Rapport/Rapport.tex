@@ -37,11 +37,9 @@ In our case, we test whether the intensity function $\lambda(t)$ of a Poisson pr
 
 \subsection{Laplace Test}
 
-\subsubsection{Theoretical Basis}
-
 Let $(N(t))_{t \geq 0}$ be a Poisson process with intensity function $\lambda(t)$.
 We observe $N(t)$ in the interval $[0, T^*]$.
-Let $0 < T_1 < T_2 < \ldots < T_n < T^*$ be the ordered observation times.
+Let $0 < T_1 < T_2 < \ldots < T_n < T^*$ be the ordered observation times. \\
 
 \noindent\textbf{Test Statistic} \\
 Under $H_0$, the arrival times $T_1, \ldots, T_n$ (conditioned on $N_{T^*} = n$) behave like order statistics from a uniform distribution.
@@ -80,9 +78,8 @@ $\pi(\lambda) = \mathbb{P}_{H_1}(F \geq s_{\alpha})$.
 \subsection{Boswell's Likelihood Ratio Test}
 
 The goal of Boswell's test is to maximize the likelihood function under the constraint that the intensity function $\lambda(t)$ is non-decreasing.
-Since the likelihood function involves the intensity values at the observed failure times, we look for the optimal estimates $\hat{\lambda}(T_i)$ that satisfy this constraint.
+Since the likelihood function involves the intensity values at the observed failure times, we look for the optimal estimates $\hat{\lambda}(T_i)$ that satisfy this constraint. \\
 
-\subsubsection{Theoretical Basis}
 Let $(N(t))_{t \geq 0}$ be a Poisson process with intensity function $\lambda(t)$.
 Consider the number $N_{T^*}$ of of "events" that have occurred in $[0, T^*]$, and denote $T_1, \ldots, T_{N_{T^*}} < T^*$ the corresponding arrival times. \\
 

@@ -25,7 +25,7 @@
 \RequirePackage{pgf, tikz}
 \usetikzlibrary{shapes.misc}
 \RequirePackage[linesnumbered,ruled,vlined]{algorithm2e}
-\RequirePackage[text={18cm,22.5cm},centering]{geometry}
+\RequirePackage[text={18cm,23cm},centering]{geometry}
 \RequirePackage[backend=biber, sorting=none]{biblatex}
 
 
