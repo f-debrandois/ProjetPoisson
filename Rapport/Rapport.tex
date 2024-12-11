@@ -69,6 +69,7 @@ Therefore, we reject $H_0$ if $F \geq s_{\alpha}$, where $s_{\alpha}$ is the cri
 with $z_{1 - \alpha}$ being the $(1 - \alpha)$-th quantile of the standard normal distribution.
 
 \noindent\textbf{Type I Error} \\
+The type I error of the test is the probability of rejecting $H_0$ when it is true. \\
 $e_1 = \mathbb{P}_{H_0}(F \geq s_{\alpha}) = \mathbb{P}(Z \geq z_{1 - \alpha}) = \alpha$.
 
 \noindent\textbf{P-value} \\
@@ -84,6 +85,87 @@ $\pi(\lambda) = \mathbb{P}_{H_1}(F \geq s_{\alpha})$.
 \subsection{Boswell's Likelihood Ratio Test}
 
 \subsubsection{Theoretical Basis}
+Likelihood : \\
+$\mathcal{L}((T_i)_{1 \leq i \leq n}; \lambda) = (\prod_{i=1}^n \lambda(T_i)) \exp(-\int_0^{T_n} \lambda(t) dt)$ \\
+On cherche $\hat{\lambda}$ maximisant $\mathcal{L}$ avec $\lambda(t)$ croissants. \\
+On suppose $\lambda(t) \leq M$ pour tout $t \in [0, T^*]$. \\
+
+On commence par chercher la forme optimale de la fonction $\lambda(\cdot)$ puis on optimise sa valeur en les points $T_i$. \\
+$\underset{\lambda}{\text{min}} \int_0^{T_n} \lambda(t) dt = \underset{\lambda}{\text{min}} \sum_{i=1}^n (T_{i+1} - T_i) \lambda(T_i)$ \\
+
+En supposant $\lambda(T_{n+1}) = M$, \\
+On cherche donc à maximiser \\
+$M(\prod_{i=1}^{n} \lambda(T_i)) \exp(-\sum_{i=1}^{n} (T_{i+1} - T_i) \lambda(T_i))$ \\
+$\Leftrightarrow \underset{\lambda}{\text{max}} \prod_{i=1}^{n} \lambda(T_i) \exp(-(T_{i+1} - T_i) \lambda(T_i))$ \\
+$\Leftrightarrow \underset{\lambda}{\text{max}} \prod_{i=1}^{n} f_i(\lambda(T_i))$ \\
+avec $f_i(x) = x \exp(-(T_{i+1} - T_i) x)$ \\
+
+On a : \\
+$\frac{\partial f_i}{\partial x}(x) = (1 - (T_{i+1} - T_i) x) \exp(-(T_{i+1} - T_i) x)$ \\
+Donc $\frac{\partial f_i}{\partial x}(x) \begin{cases}
+    > 0 & \text{si } x < \frac{1}{T_{i+1} - T_i} \\
+    < 0 & \text{si } x > \frac{1}{T_{i+1} - T_i}
+\end{cases}$
+\\
+Donc $f_i$ est unimodale avec un maximum unique. \\
+Donc $\prod_{i=1}^{n} f_i$ est unimodale avec un maximum unique, par produit de fonctions unimodales. \\
+Ainsi, d'après le théorème de énoncé dans l'article Boswell \cite{Boswell1966} qui reprend les travaux de Brunk et von Eeden \cite{VanEeden1956}, 
+il existe $(\hat{x}_1, \ldots, \hat{x}_n)$ maximisant $\prod_{i=1}^{n} f_i(\lambda_i)$. \\
+avec $\hat{\lambda}(T_1) < \ldots < \hat{\lambda}(T_n)$. \\
+
+Si $\hat{\lambda}(T_i) = \underset{1 \leq \alpha \leq i}{\text{max}} \underset{i \leq \beta \leq n}{\text{min}} M(\alpha, \beta)$. \\
+où $M(\alpha, \beta)$ est le max de $\prod_{i=\alpha}^{\beta} f_i(x)$. \\
+
+Ainsi, on a : \\
+$\hat{\lambda} = \begin{cases}
+    0 & \text{si } 0 \leq t < T_1 \\
+    \hat{\lambda}(T_i) & \text{si } T_i \leq t < T_{i+1} \\
+    M & \text{si } T_n \leq t
+\end{cases}$ \\
+
+Or $\hat{\lambda}(T_i) = \underset{1 \leq \alpha \leq i}{\text{max}} \underset{i \leq \beta \leq n}{\text{min}} M(\alpha, \beta)$ \\
+Or $M(\alpha, \beta)$ est la valeur maximale de $\prod_{i=\alpha}^{\beta} f_i(x)$ \\
+$ = \prod_{i=\alpha}^{\beta} x \exp(-(T_{i+1} - T_i) x)$ \\
+$ = x^{\beta - \alpha + 1} \exp(-(T_{\beta + 1} - T_{\alpha})x)$ \\
+
+On a donc : \\
+$\frac{\partial \prod_{i=\alpha}^{\beta} f_i(x)}{\partial x}(x) = (\beta - \alpha + 1) x^{\beta - \alpha} \exp(-(T_{\beta + 1} - T_{\alpha})x) - (T_{\beta + 1} - T_{\alpha}) x^{\beta - \alpha + 1} \exp(-(T_{\beta + 1} - T_{\alpha})x)$ \\
+$ = ((\beta - \alpha + 1) - (T_{\beta + 1} - T_{\alpha}) x) x^{\beta - \alpha} \exp(-(T_{\beta + 1} - T_{\alpha})x)$ \\
+
+$\frac{\partial \prod_{i=\alpha}^{\beta} f_i(x)}{\partial x}(x) = 0 \Leftrightarrow x = \frac{\beta - \alpha + 1}{T_{\beta + 1} - T_{\alpha}}$ \\
+Donc $\hat{\lambda}(T_i) = \underset{1 \leq \alpha \leq i}{\text{max}} \underset{i \leq \beta \leq n}{\text{min}} \frac{\beta - \alpha + 1}{T_{\beta + 1} - T_{\alpha}}$ \\
+
+Conditional ratio test : \\
+we use the log-likelihood. \\
+$\lambda_{LR} = -2 \log \left( \frac{\underset{\lambda \in \Lambda_0}{\text{sup }} \mathcal{L}(\lambda)}{\underset{\lambda \in \Lambda}{\text{sup }} \mathcal{L}(\lambda)}\right) = -2 ( \log (l(\lambda_0)) - \log (l(\hat{\lambda})))$ \\
+where $\lambda_0$ is the null hypothesis : $\lambda_0(t) = \frac{n}{T_n}$. \\
+
+Donc : \\
+$\lambda_{LR} = -2 \left[ log\left(\prod_{i=1}^{n} \lambda_0(T_i) \exp(-\int_0^{T_n} \lambda_0(t) dt)\right) - log \left(\prod_{i=1}^{n} \hat{\lambda}(T_i) \exp(-\int_0^{T_n} \hat{\lambda}(t) dt)\right) \right]$ \\
+$ = -2 \left( n \log(\frac{n}{T_n}) - T_n \frac{n}{T_n} - \sum_{i=1}^{n} \log(\hat{\lambda}(T_i)) + \int_0^{T_n} \hat{\lambda}(t) dt \right)$ \\
+
+D'après le théorème de Grenander \cite{Grenander1956} explicité dans l'article de Boswell \cite{Boswell1966}, on a : \\
+$\sum_{i=1}^{n} \hat{\lambda}(T_i) = n$ \\
+Donc : $\int_0^{T_n} \hat{\lambda}(t) dt = n$ \\
+Donc : $\lambda_{LR} = 2 \left( \sum_{i=1}^{n} \log(\hat{\lambda}(T_i)) + n \log(\frac{T_n}{n}) \right)$ \\
+
+On pose : \\
+\begin{equation}
+    W = 2 \left( \sum_{i=1}^{n} \log(\hat{\lambda}(T^*_i)) + n \log(\frac{T^*}{n}) \right)
+    \label{eq:boswell_test_statistic}
+\end{equation}
+
+D'après le théorème de Wilks \cite{Wilks1938}, on a : \\
+$W \sim \chi^2(d)$ sous $H_0$ avec $d$ la différence de dimension entre $\Lambda$ et $\Lambda_0$ : $d = n - 1$. \\
+
+Decision rule, Type I Error, P-value
+
+Sous $H_1$, on doit utiliser la logique combinatoire. \\
+$\lambda(t)$ est constante par morceaux et on a $k \leq n$ points de rupture donc $k+1$ degres de liberté. \\
+On utilise les nombres de Stirling de première espèce $s(n, k)$ pour compter les permutations de $n$ éléments en $k$ cycles. \\
+On a donc : \\
+$\mathbb{P}_{H_1}(W \geq w) = \sum_{k=1}^{n} \frac{s(n, k)}{n!} \mathbb{P}(\chi^2(k+1) \geq w)$
+
 
 
 \section{Numerical Simulations}
