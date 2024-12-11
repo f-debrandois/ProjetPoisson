@@ -83,19 +83,22 @@ The goal of Boswell's test is to maximize the likelihood function under the cons
 Since the likelihood function involves the intensity values at the observed failure times, we look for the optimal estimates $\hat{\lambda}(T_i)$ that satisfy this constraint.
 
 \subsubsection{Theoretical Basis}
+Let $(N(t))_{t \geq 0}$ be a Poisson process with intensity function $\lambda(t)$.
+Consider the number $N_{T^*}$ of of "events" that have occurred in $[0, T^*]$, and denote $T_1, \ldots, T_{N_{T^*}} < T^*$ the corresponding arrival times. \\
+
 
 \noindent\textbf{Likelihood Function Recap} \\
-The likelihood function for the ordered observation times $T_1, \ldots, T_n$ is given by:
+The likelihood function for the observation times $T_1, \ldots, T_n$, conditioned on $N_{T^*} = n$, is given by:
 $$
-\mathcal{L}((T_i)_{1 \leq i \leq n}; \lambda) = \left(\prod_{i=1}^n \lambda(T_i)\right) \exp\left(-\int_0^{T_n} \lambda(t) dt\right)
+\mathcal{L}((N_t)_{t \in [0, T^*]}; \lambda) = \left(\prod_{i=1}^n \lambda(T_i)\right) \exp\left(-\int_0^{T^*} \lambda(t) dt\right)
 $$
 
 We assume that the intensity function $\lambda(t)$ is piecewise constant and non-decreasing between successive failure times $T_{i}$ and $T_{i+1}$.
 Therefore, we need to determine the values $\hat{\lambda}(T_i)$ that maximize this likelihood. \\
 
 \noindent\textbf{Formulating the Optimization Problem} \\
-Under the previous assumptions: \\
-$\int_0^{T_n} \lambda(t) dt = \sum_{i=1}^n (T_{i+1} - T_i) \lambda(T_i)$ \\
+Under the previous assumptions (with $T_{n+1} = T^*$): \\
+$\int_0^{T^*} \lambda(t) dt = \sum_{i=1}^n (T_{i+1} - T_i) \lambda(T_i)$ \\
 
 \noindent We want to find $\hat{\lambda}(T_i)$ that maximizes: \\
 $\prod_{i=1}^{n} \lambda(T_i) \exp(-(T_{i+1} - T_i) \lambda(T_i))$ \\
@@ -134,22 +137,22 @@ W = -2 \log \left( \frac{\text{sup }_{\lambda \in \Lambda_0} \mathcal{L}(\lambda
 $$
 where $\Lambda_0$ is the set of constant intensity functions and $\Lambda$ is the set of non-decreasing intensity functions. \\
 
-Under $H_0$, the maximum likelihood estimate of $\lambda(t)$ is $\lambda_0(t) = \frac{n}{T_n}$. \\
+Under $H_0$, the maximum likelihood estimate of $\lambda(t)$ is $\lambda_0(t) = \frac{N_{T^*}}{T^*} = \frac{n}{T^*}$. \\
 The log-likelihood under $H_0$ is:
 $$
-\log\mathcal{L}(\lambda_0) = \sum_{i=1}^n \log(\lambda_0(T_i)) - T_n \lambda_0(T_n) = n \log\left(\frac{n}{T_n}\right) - n
+\log\mathcal{L}(\lambda_0) = \sum_{i=1}^n \log(\lambda_0(T_i)) - T^* \lambda_0(T^*) = n \log\left(\frac{n}{T^*}\right) - n
 $$
 
 Under $H_1$, the maximum likelihood using the optimal estimate $\hat{\lambda}(t)$ is:
 $$
-\log\mathcal{L}(\hat{\lambda}) = \sum_{i=1}^n \log(\hat{\lambda}(T_i)) - \int_0^{T_n} \hat{\lambda}(t) dt
+\log\mathcal{L}(\hat{\lambda}) = \sum_{i=1}^n \log(\hat{\lambda}(T_i)) - \int_0^{T^*} \hat{\lambda}(t) dt
 $$
 By Grenander's theorem \cite{Grenander1956}, we know that: \\
-$\int_0^{T_n} \hat{\lambda}(t) dt = n$ \\
+$\int_0^{T^*} \hat{\lambda}(t) dt = n$ \\
 
 Therefore, the test statistic $W$ becomes:
 \begin{equation}
-    W = 2 \left( \sum_{i=1}^{n} \log(\hat{\lambda}(T_i)) + n \log\left(\frac{T_n}{n}\right) \right)
+    W = 2 \left( \sum_{i=1}^{n} \log(\hat{\lambda}(T_i)) + n \log\left(\frac{T^*}{n}\right) \right)
     \label{eq:boswell_test_statistic}
 \end{equation}
 
@@ -173,7 +176,7 @@ The power of the test is the probability of rejecting $H_0$ when $H_1$ is true: 
 $\pi(\lambda) = \mathbb{P}_{H_1}(W \geq w_{\alpha})$. \\
 Under $H_1$, the intensity function $\lambda(t)$ is non-decreasing and can potentially exhibit multiple change points.
 Suppose there are $k$ change points, this implies there are $k + 1$ regions where the intensity remains constant.
-The possible ways that the $n$ observed failure times can be grouped into $k$ segments are given by the Stirling numbers of the first kind $s(n, k)$. \\
+The possible ways that the $n$ observed failure times can be grouped into $k$ segments are given by the Stirling numbers of the first kind $s(n, k)$ \cite{StirlingNumbers}. \\
 To compute the power, we sum over all possible numbers of segments $k$ and weigh each possibility by the probability of observing $W \geq w_{\alpha}$ for that configuration.
 \begin{equation}
     \pi(\lambda) = \sum_{k=1}^{n} \frac{s(n, k)}{n!} \mathbb{P}(\chi^2(k+1) \geq w_{\alpha})
@@ -216,12 +219,10 @@ Discussion of whether an increasing trend is detected and its significance. \\
 Comparison with Simulated Results. \\
 Reflecting on how real-world results compare to the numerical simulations.
 
-\newpage qsd
-
 
 
 \section{Conclusion}
-Ceci est une citation \cite{smith2020example}.
+
 
 
 
