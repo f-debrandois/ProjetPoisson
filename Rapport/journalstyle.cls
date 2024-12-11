@@ -21,11 +21,12 @@
 \RequirePackage{dsfont}
 \RequirePackage{multicol}
 \RequirePackage{csquotes}
+\RequirePackage[hyperindex=true, hyperfigures=false, linktocpage=true, colorlinks=true, linkcolor=blue, urlcolor=blue]{hyperref}
 \RequirePackage{pgf, tikz}
 \usetikzlibrary{shapes.misc}
 \RequirePackage[linesnumbered,ruled,vlined]{algorithm2e}
 \RequirePackage[text={18cm,22.5cm},centering]{geometry}
-\RequirePackage[backend=biber]{biblatex}
+\RequirePackage[backend=biber, sorting=none]{biblatex}
 
 
 % Bibliography

@@ -4,7 +4,7 @@
 
 
 \title{Tests for an Increasing Trend in the Intensity of a Poisson Process: A Power Study}
-\author{Maxime Baba, Mathile Ferrera, Félix Foucher de Brandois}
+\author{Maxime Baba, Mathile Ferreira, Félix Foucher de Brandois}
 \newcommand{\footertext}{Formation ModIA - INSA, 5$^{\text{th}}$ year \\ 2024-2025}
 
 \begin{document}
@@ -21,17 +21,12 @@
 
 A Nonhomogeneous Poisson Process (NHPP) is a stochastic process often used to model phenomena where the rate of occurrence of events changes over time.
 The rate, or intensity function $\lambda(t)$, represents the expected number of events per unit time at a given time $t$.
-Understanding and analyzing the behavior of this rate is crucial in diverse fields such as reliability engineering, healthcare, and environmental studies, as it helps identify patterns, predict future events, and optimize interventions.
+Understanding and analyzing the behavior of this rate is crucial in diverse fields such as reliability engineering, healthcare, and environmental studies, as it helps identify patterns, predict future events, and optimize interventions \cite{ExampleIntervention}.
 Detecting increasing trends in the rate can be particularly important, for example, in monitoring system deterioration or identifying escalating risks in processes.
-Over the years, a variety of statistical methods have been proposed to identify increasing trends in NHPPs.
-This study aims to extend the work of Bain, Engelhardt, and Wright \cite{BainEngelhardtWright} by providing a detailed theoretical and practical exploration of the Laplace test and Boswell’s likelihood ratio test.
-The paper is structured in two main parts: a presentation of the selected tests, including their theoretical basis and simulated performance comparisons, and a practical application to real-world data.
+Although various statistical methods have been proposed to identify increasing trends in NHPPs, existing treatments—such as those by Bain, Engelhardt, and Wright \cite{BainEngelhardtWright}—lack clarity and precision in both theoretical explanation and practical application.
+This study addresses these shortcomings by providing a detailed exploration of the Laplace test and Boswell’s likelihood ratio test.
+The paper is structured in three parts: a theoretical discussion of the selected tests, numerical simulations comparing their performance, and an application to real-world data.
 
-\textit{Changes to be made:}
-\begin{itemize}
-    \item Ordre de présentation de l'article
-    \item Source sur les exemples (healthcare, ...)
-\end{itemize}
 
 \section{Theoretical Framework for Trend Detection Tests}
 
@@ -61,21 +56,21 @@ Define the Laplace test statistic as:
 
 By the Central Limit Theorem, under $H_0$,  can be standardized as: 
 $Z = \frac{F - \mathbb{E}[F]}{\sqrt{\text{Var}(F)}} = \frac{F - \frac{n}{2}}{\sqrt{\frac{n}{12}}} \sim \mathcal{N}(0, 1)$
-for large $n$.
+for large $n$. \\
 
 \noindent\textbf{Decision Rule} \\
 If the intensity $\lambda(t)$ is increasing, the arrival times $T_i$ are expected to cluster towards the end of the interval $[0, T^*]$, making $F$ larger.
 Therefore, we reject $H_0$ if $F \geq s_{\alpha}$, where $s_{\alpha}$ is the critical threshold determined as: $s_{\alpha} = \frac{n}{2} + z_{1 - \alpha} \sqrt{\frac{n}{12}}$. \\
-with $z_{1 - \alpha}$ being the $(1 - \alpha)$-th quantile of the standard normal distribution.
+with $z_{1 - \alpha}$ being the $(1 - \alpha)$-th quantile of the standard normal distribution. \\
 
 \noindent\textbf{Type I Error} \\
 The type I error of the test is the probability of rejecting $H_0$ when it is true. \\
-$e_1 = \mathbb{P}_{H_0}(F \geq s_{\alpha}) = \mathbb{P}(Z \geq z_{1 - \alpha}) = \alpha$.
+$e_1 = \mathbb{P}_{H_0}(F \geq s_{\alpha}) = \mathbb{P}(Z \geq z_{1 - \alpha}) = \alpha$. \\
 
 \noindent\textbf{P-value} \\
 The p-value measures the probability of obtaining a test statistic at least as extreme as the observed $F_{\text{obs}}$, under $H_0$.
 It is given by: \\
-$\hat{\alpha} = \mathbb{P}_{H_0}(F \geq F_{\text{obs}}) = 1 - \Phi(\frac{F_{\text{obs}} - \frac{n}{2}}{\sqrt{\frac{n}{12}}})$.
+$\hat{\alpha} = \mathbb{P}_{H_0}(F \geq F_{\text{obs}}) = 1 - \Phi(\frac{F_{\text{obs}} - \frac{n}{2}}{\sqrt{\frac{n}{12}}})$. \\
 
 \noindent\textbf{Power} \\
 The power of the test is the probability of rejecting $H_0$ when $H_1$ is true. \\
@@ -84,87 +79,107 @@ $\pi(\lambda) = \mathbb{P}_{H_1}(F \geq s_{\alpha})$.
 
 \subsection{Boswell's Likelihood Ratio Test}
 
+The goal of Boswell's test is to maximize the likelihood function under the constraint that the intensity function $\lambda(t)$ is non-decreasing.
+Since the likelihood function involves the intensity values at the observed failure times, we look for the optimal estimates $\hat{\lambda}(T_i)$ that satisfy this constraint.
+
 \subsubsection{Theoretical Basis}
-Likelihood : \\
-$\mathcal{L}((T_i)_{1 \leq i \leq n}; \lambda) = (\prod_{i=1}^n \lambda(T_i)) \exp(-\int_0^{T_n} \lambda(t) dt)$ \\
-On cherche $\hat{\lambda}$ maximisant $\mathcal{L}$ avec $\lambda(t)$ croissants. \\
-On suppose $\lambda(t) \leq M$ pour tout $t \in [0, T^*]$. \\
 
-On commence par chercher la forme optimale de la fonction $\lambda(\cdot)$ puis on optimise sa valeur en les points $T_i$. \\
-$\underset{\lambda}{\text{min}} \int_0^{T_n} \lambda(t) dt = \underset{\lambda}{\text{min}} \sum_{i=1}^n (T_{i+1} - T_i) \lambda(T_i)$ \\
+\noindent\textbf{Likelihood Function Recap} \\
+The likelihood function for the ordered observation times $T_1, \ldots, T_n$ is given by:
+$$
+\mathcal{L}((T_i)_{1 \leq i \leq n}; \lambda) = \left(\prod_{i=1}^n \lambda(T_i)\right) \exp\left(-\int_0^{T_n} \lambda(t) dt\right)
+$$
 
-En supposant $\lambda(T_{n+1}) = M$, \\
-On cherche donc à maximiser \\
-$M(\prod_{i=1}^{n} \lambda(T_i)) \exp(-\sum_{i=1}^{n} (T_{i+1} - T_i) \lambda(T_i))$ \\
-$\Leftrightarrow \underset{\lambda}{\text{max}} \prod_{i=1}^{n} \lambda(T_i) \exp(-(T_{i+1} - T_i) \lambda(T_i))$ \\
-$\Leftrightarrow \underset{\lambda}{\text{max}} \prod_{i=1}^{n} f_i(\lambda(T_i))$ \\
-avec $f_i(x) = x \exp(-(T_{i+1} - T_i) x)$ \\
+We assume that the intensity function $\lambda(t)$ is piecewise constant and non-decreasing between successive failure times $T_{i}$ and $T_{i+1}$.
+Therefore, we need to determine the values $\hat{\lambda}(T_i)$ that maximize this likelihood. \\
 
-On a : \\
-$\frac{\partial f_i}{\partial x}(x) = (1 - (T_{i+1} - T_i) x) \exp(-(T_{i+1} - T_i) x)$ \\
-Donc $\frac{\partial f_i}{\partial x}(x) \begin{cases}
-    > 0 & \text{si } x < \frac{1}{T_{i+1} - T_i} \\
-    < 0 & \text{si } x > \frac{1}{T_{i+1} - T_i}
-\end{cases}$
-\\
-Donc $f_i$ est unimodale avec un maximum unique. \\
-Donc $\prod_{i=1}^{n} f_i$ est unimodale avec un maximum unique, par produit de fonctions unimodales. \\
-Ainsi, d'après le théorème de énoncé dans l'article Boswell \cite{Boswell1966} qui reprend les travaux de Brunk et von Eeden \cite{VanEeden1956}, 
-il existe $(\hat{x}_1, \ldots, \hat{x}_n)$ maximisant $\prod_{i=1}^{n} f_i(\lambda_i)$. \\
-avec $\hat{\lambda}(T_1) < \ldots < \hat{\lambda}(T_n)$. \\
+\noindent\textbf{Formulating the Optimization Problem} \\
+Under the previous assumptions: \\
+$\int_0^{T_n} \lambda(t) dt = \sum_{i=1}^n (T_{i+1} - T_i) \lambda(T_i)$ \\
 
-Si $\hat{\lambda}(T_i) = \underset{1 \leq \alpha \leq i}{\text{max}} \underset{i \leq \beta \leq n}{\text{min}} M(\alpha, \beta)$. \\
-où $M(\alpha, \beta)$ est le max de $\prod_{i=\alpha}^{\beta} f_i(x)$. \\
+\noindent We want to find $\hat{\lambda}(T_i)$ that maximizes: \\
+$\prod_{i=1}^{n} \lambda(T_i) \exp(-(T_{i+1} - T_i) \lambda(T_i))$ \\
 
-Ainsi, on a : \\
-$\hat{\lambda} = \begin{cases}
-    0 & \text{si } 0 \leq t < T_1 \\
-    \hat{\lambda}(T_i) & \text{si } T_i \leq t < T_{i+1} \\
-    M & \text{si } T_n \leq t
-\end{cases}$ \\
+This can be rewritten as: \\
+\begin{equation*}
+    \begin{split}
+        &\underset{\lambda}{\text{max}} \prod_{i=1}^{n} f_i(\lambda(T_i)) \\
+        \text{where } &f_i(x) = x \exp(-(T_{i+1} - T_i) x)
+    \end{split}
+    \label{eq:boswell_optimization_problem}
+\end{equation*}
 
-Or $\hat{\lambda}(T_i) = \underset{1 \leq \alpha \leq i}{\text{max}} \underset{i \leq \beta \leq n}{\text{min}} M(\alpha, \beta)$ \\
-Or $M(\alpha, \beta)$ est la valeur maximale de $\prod_{i=\alpha}^{\beta} f_i(x)$ \\
-$ = \prod_{i=\alpha}^{\beta} x \exp(-(T_{i+1} - T_i) x)$ \\
-$ = x^{\beta - \alpha + 1} \exp(-(T_{\beta + 1} - T_{\alpha})x)$ \\
+The function $f_i(x)$ is unimodal, meaning it has a unique maximum.
+According to Boswell's theorem \cite{Boswell1966}, following the works of Brunk and von Eeden \cite{VanEeden1956}, the likelihood is maximized by the non-decreasing function $\hat{\lambda}(t)$ given by: \\
+\begin{equation*}
+    \begin{split}
+        &\hat{\lambda}(T_i) = \underset{1 \leq \alpha \leq i}{\text{max}} \underset{i \leq \beta \leq n}{\text{min}} M(\alpha, \beta) \\
+        \text{where } &M(\alpha, \beta) \text{ is the maximum of } x \mapsto \prod_{i=\alpha}^{\beta} f_i(x)
+    \end{split}
+    \label{eq:boswell_optimal_lambda}
+\end{equation*}
 
-On a donc : \\
-$\frac{\partial \prod_{i=\alpha}^{\beta} f_i(x)}{\partial x}(x) = (\beta - \alpha + 1) x^{\beta - \alpha} \exp(-(T_{\beta + 1} - T_{\alpha})x) - (T_{\beta + 1} - T_{\alpha}) x^{\beta - \alpha + 1} \exp(-(T_{\beta + 1} - T_{\alpha})x)$ \\
-$ = ((\beta - \alpha + 1) - (T_{\beta + 1} - T_{\alpha}) x) x^{\beta - \alpha} \exp(-(T_{\beta + 1} - T_{\alpha})x)$ \\
-
-$\frac{\partial \prod_{i=\alpha}^{\beta} f_i(x)}{\partial x}(x) = 0 \Leftrightarrow x = \frac{\beta - \alpha + 1}{T_{\beta + 1} - T_{\alpha}}$ \\
-Donc $\hat{\lambda}(T_i) = \underset{1 \leq \alpha \leq i}{\text{max}} \underset{i \leq \beta \leq n}{\text{min}} \frac{\beta - \alpha + 1}{T_{\beta + 1} - T_{\alpha}}$ \\
-
-Conditional ratio test : \\
-we use the log-likelihood. \\
-$\lambda_{LR} = -2 \log \left( \frac{\underset{\lambda \in \Lambda_0}{\text{sup }} \mathcal{L}(\lambda)}{\underset{\lambda \in \Lambda}{\text{sup }} \mathcal{L}(\lambda)}\right) = -2 ( \log (l(\lambda_0)) - \log (l(\hat{\lambda})))$ \\
-where $\lambda_0$ is the null hypothesis : $\lambda_0(t) = \frac{n}{T_n}$. \\
-
-Donc : \\
-$\lambda_{LR} = -2 \left[ log\left(\prod_{i=1}^{n} \lambda_0(T_i) \exp(-\int_0^{T_n} \lambda_0(t) dt)\right) - log \left(\prod_{i=1}^{n} \hat{\lambda}(T_i) \exp(-\int_0^{T_n} \hat{\lambda}(t) dt)\right) \right]$ \\
-$ = -2 \left( n \log(\frac{n}{T_n}) - T_n \frac{n}{T_n} - \sum_{i=1}^{n} \log(\hat{\lambda}(T_i)) + \int_0^{T_n} \hat{\lambda}(t) dt \right)$ \\
-
-D'après le théorème de Grenander \cite{Grenander1956} explicité dans l'article de Boswell \cite{Boswell1966}, on a : \\
-$\sum_{i=1}^{n} \hat{\lambda}(T_i) = n$ \\
-Donc : $\int_0^{T_n} \hat{\lambda}(t) dt = n$ \\
-Donc : $\lambda_{LR} = 2 \left( \sum_{i=1}^{n} \log(\hat{\lambda}(T_i)) + n \log(\frac{T_n}{n}) \right)$ \\
-
-On pose : \\
+We can find the form of $M(\alpha, \beta)$ by derviating the product of $f_i(x)$ and setting it to zero. \\
+This leads to: \\
 \begin{equation}
-    W = 2 \left( \sum_{i=1}^{n} \log(\hat{\lambda}(T^*_i)) + n \log(\frac{T^*}{n}) \right)
+    \hat{\lambda}(T_i) = \underset{1 \leq \alpha \leq i}{\text{max}} \underset{i \leq \beta \leq n}{\text{min}} \frac{\beta - \alpha + 1}{T_{\beta + 1} - T_{\alpha}}
+    \label{eq:boswell_optimal_lambda_formula}
+\end{equation}
+
+\noindent\textbf{Test Statistic} \\
+The likelihood ratio test (LRT) compares the likelihood of the data under the null hypothesis $H_0$ (constant intensity) with the likelihood under the alternative hypothesis $H_1$ (non-decreasing intensity).
+The test statistic is defined as: \\
+$$
+W = -2 \log \left( \frac{\text{sup }_{\lambda \in \Lambda_0} \mathcal{L}(\lambda)}{\text{sup }_{\lambda \in \Lambda} \mathcal{L}(\lambda)} \right)
+$$
+where $\Lambda_0$ is the set of constant intensity functions and $\Lambda$ is the set of non-decreasing intensity functions. \\
+
+Under $H_0$, the maximum likelihood estimate of $\lambda(t)$ is $\lambda_0(t) = \frac{n}{T_n}$. \\
+The log-likelihood under $H_0$ is:
+$$
+\log\mathcal{L}(\lambda_0) = \sum_{i=1}^n \log(\lambda_0(T_i)) - T_n \lambda_0(T_n) = n \log\left(\frac{n}{T_n}\right) - n
+$$
+
+Under $H_1$, the maximum likelihood using the optimal estimate $\hat{\lambda}(t)$ is:
+$$
+\log\mathcal{L}(\hat{\lambda}) = \sum_{i=1}^n \log(\hat{\lambda}(T_i)) - \int_0^{T_n} \hat{\lambda}(t) dt
+$$
+By Grenander's theorem \cite{Grenander1956}, we know that: \\
+$\int_0^{T_n} \hat{\lambda}(t) dt = n$ \\
+
+Therefore, the test statistic $W$ becomes:
+\begin{equation}
+    W = 2 \left( \sum_{i=1}^{n} \log(\hat{\lambda}(T_i)) + n \log\left(\frac{T_n}{n}\right) \right)
     \label{eq:boswell_test_statistic}
 \end{equation}
 
-D'après le théorème de Wilks \cite{Wilks1938}, on a : \\
-$W \sim \chi^2(d)$ sous $H_0$ avec $d$ la différence de dimension entre $\Lambda$ et $\Lambda_0$ : $d = n - 1$. \\
+Under $H_0$, by Wilks' theorem \cite{Wilks1938}, the test statistic $W$ follows a $\chi^2$ distribution with $n - 1$ degrees of freedom: $W \sim \chi^2(n - 1)$. \\
 
-Decision rule, Type I Error, P-value
+\noindent\textbf{Decision Rule} \\
+The decision rule for the LRT is based on the critical threshold $w_{\alpha}$. 
+If $W \geq w_{\alpha}$, we reject $H_0$. $w_{\alpha}$ is determined by the $(1 - \alpha)$-th quantile of the $\chi^2(n - 1)$ distribution. \\
 
-Sous $H_1$, on doit utiliser la logique combinatoire. \\
-$\lambda(t)$ est constante par morceaux et on a $k \leq n$ points de rupture donc $k+1$ degres de liberté. \\
-On utilise les nombres de Stirling de première espèce $s(n, k)$ pour compter les permutations de $n$ éléments en $k$ cycles. \\
-On a donc : \\
-$\mathbb{P}_{H_1}(W \geq w) = \sum_{k=1}^{n} \frac{s(n, k)}{n!} \mathbb{P}(\chi^2(k+1) \geq w)$
+\noindent\textbf{Type I Error} \\
+The probability of a Type I error (rejecting $H_0$ when it is true) is: \\
+$e_1 = \mathbb{P}_{H_0}(W \geq w_{\alpha}) = \alpha$. \\
+
+\noindent\textbf{P-value} \\
+The p-value is the probability of obtaining a test statistic at least as extreme as the observed $W_{\text{obs}}$ under $H_0$. 
+It is given by: \\
+$\hat{\alpha} = \mathbb{P}_{H_0}(W \geq W_{\text{obs}}) = 1 - F_{\chi^2(n - 1)}(W_{\text{obs}})$. \\
+
+\noindent\textbf{Power} \\
+The power of the test is the probability of rejecting $H_0$ when $H_1$ is true: \\
+$\pi(\lambda) = \mathbb{P}_{H_1}(W \geq w_{\alpha})$. \\
+Under $H_1$, the intensity function $\lambda(t)$ is non-decreasing and can potentially exhibit multiple change points.
+Suppose there are $k$ change points, this implies there are $k + 1$ regions where the intensity remains constant.
+The possible ways that the $n$ observed failure times can be grouped into $k$ segments are given by the Stirling numbers of the first kind $s(n, k)$. \\
+To compute the power, we sum over all possible numbers of segments $k$ and weigh each possibility by the probability of observing $W \geq w_{\alpha}$ for that configuration.
+\begin{equation}
+    \pi(\lambda) = \sum_{k=1}^{n} \frac{s(n, k)}{n!} \mathbb{P}(\chi^2(k+1) \geq w_{\alpha})
+    \label{eq:boswell_power}
+\end{equation}
+
 
 
 
