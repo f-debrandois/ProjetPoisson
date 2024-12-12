@@ -21,6 +21,7 @@
 \RequirePackage{dsfont}
 \RequirePackage{multicol}
 \RequirePackage{csquotes}
+\RequirePackage{float}
 \RequirePackage[hyperindex=true, hyperfigures=false, linktocpage=true, colorlinks=true, linkcolor=blue, urlcolor=blue]{hyperref}
 \RequirePackage{pgf, tikz}
 \usetikzlibrary{shapes.misc}
@@ -71,6 +72,7 @@
     % Horizontal line
     \hrule
 
+    \setlength{\columnsep}{1cm}
     \begin{multicols}{2}
     
     \vspace{1cm} % Space after horizontal line
