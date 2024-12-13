@@ -1,0 +1,205 @@
+---
+title: "Tests for an Increasing Trend in the Intensity of a Poisson Process: A Power Study"
+author: "5 ModIA"
+date: "2024/2025"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(ggplot2)
+library(dplyr)
+library(purrr)
+```
+
+
+
+# Introduction  
+In this study, we investigate two statistical tests for detecting an increasing trend in the intensity of a Nonhomogeneous Poisson Process (NHPP):  
+1. Laplace Test  
+2. Boswell's Likelihood Ratio Test  
+
+We use Monte Carlo simulations to generate data under different scenarios and estimate the power of these tests.
+
+# Theoretical Background
+
+## Laplace Test
+The core idea of the Laplace test is to analyze the distribution of the arrival times $T_1, T_2, \ldots, T_n$ within the observation interval $[0, T^*]$.
+The test is based on the Laplace statistic $F$ defined as the average of the arrival times:
+$$
+F = \frac{1}{T^*} \sum_{i=1}^{n} T_i.
+$$
+Under the null hypothesis of a constant intensity, the $T_i$ are uniformly distributed.
+If the intensity is increasing, the $T_i$ cluster towards the end, making $F$ larger.
+We reject the null hypothesis if $F$ is larger than a critical value. 
+
+## Boswell Test
+The core idea of the Boswell test is to compare the likelihood of the observed arrival times $T_1, T_2, \ldots, T_n$ under the assumption of a constant intensity (null hypothesis) versus a non-decreasing intensity (alternative hypothesis).
+The test is based on the likelihood ratio statistic $W$, which measures the difference between the maximum likelihoods under these two hypotheses:
+$$
+W = 2 \left( \sum_{i=1}^{n} \log(\hat{\lambda}(T_i)) + n \log\left(\frac{T^*}{n}\right) \right),
+$$
+
+where $\hat{\lambda}(T_i)$ is the optimal non-decreasing estimate of the intensity.
+Under the null hypothesis, $W$ follows a chi-squared distribution.
+We reject the null hypothesis if $W$ is larger than a critical value, indicating a better fit for a non-decreasing intensity.
+
+
+# Numerical Simulations
+
+## Simulation Methodology
+
+To simulate arrival times $T_1, T_2, \ldots, T_n$ for an NHPP with a given intensity function $\lambda(t)$ over $[0, T^*]$, we use the inverse transform method.
+
+```{r simulhPP, eval=TRUE}
+# Define the simulation function for a Poisson Process with rate lambda = 1
+simulate_hpp <- function(n, T_star) {
+  return(sort(runif(n, min = 0, max = T_star)))
+}
+```
+
+
+```{r simulnhPP, eval=TRUE}
+# Define the simulation function for a Nonhomogeneous Poisson Process
+simulate_nhpp <- function(n, T_star, lambda_func, lambda_inv_func) {
+  u = sort(runif(n, min = 0, max = lambda_func(T_star)))
+  u = lambda_inv_func(u)
+  return(u)
+}
+```
+
+To compute the power of the Laplace and Boswell tests, we perform a Monte Carlo simulation for different scenarios of increasing intensity functions $\lambda(t)$.
+
+```{r MonteCarlo, eval=TRUE}
+# Define the Monte Carlo simulation function
+monte_carlo_simulation <- function(n, T_star, lambda_func, lambda_inv_func, 
+                                    test_func, quantile, n_sim) {
+  count_reject = 0
+  for (i in 1:n_sim) {
+    # Simulate NHPP data
+    PPi = simulate_nhpp(n, T_star, lambda_func, lambda_inv_func)
+
+    # Perform the test
+    Vobs = test_func(PPi, T_star, n)
+
+    # Check if the test statistic exceeds the critical value
+    if (Vobs > quantile) {
+      count_reject = count_reject + 1
+    }
+  }
+  return(count_reject / n_sim)
+}
+```
+
+We simulate data with various increasing intensity functions $\lambda(t)$:
+\begin{itemize}
+  \item Exponential trend: $\begin{cases} \lambda(t) = e^{\beta t} \\ 
+    \Lambda(t) = \frac{1}{\beta} (e^{\beta t} - 1) \\
+    \Lambda^{-1}(u) = \frac{1}{\beta} \log(\beta u + 1) \end{cases}$
+
+  \item Weibull trend: $\begin{cases} \lambda(t) = \beta t^{\beta - 1} \\ 
+    \Lambda(t) = t^\beta \\
+    \Lambda^{-1}(u) = u^{1/\beta} \end{cases}$
+  
+  \item Step-function trend: $\begin{cases} \lambda(t) = 1 + 1_{t > \tau} \\ 
+    \Lambda(t) = t + \tau \\
+    \Lambda^{-1}(u) = u - \tau \end{cases}$
+\end{itemize}
+
+
+```{r lambda_funcs, eval=TRUE}
+# Define cumulative intensity functions and their inverses
+# Exponential trend
+lambda_exp <- function(beta) {
+  return(function(t) { (1 / beta) * (exp(beta * t) - 1) })
+}
+lambda_inv_exp <- function(beta) {
+  return(function(u) { (1 / beta) * log(beta * u + 1) })
+}
+
+# Weibull trend
+lambda_weibull <- function(beta) {
+  return(function(t) { t^beta })
+}
+lambda_inv_weibull <- function(beta) {
+  return(function(u) { u^(1 / beta) })
+}
+
+# Step-function trend
+
+```
+
+We define the Laplace and Boswell tests for an increasing intensity trend.
+
+```{r tools, eval=TRUE, include=FALSE}
+stirling_number <- function(n, k) {
+  if (k <= 0 || k > n) {
+    return(0)
+  }
+
+  if (n == 1 && k == 1) {
+    return(1)
+  }
+
+  return(stirling_number(n - 1, k - 1) + (n - 1) * stirling_number(n - 1, k))
+}
+
+lambda_hat <- function(PPi, T_star, n) {
+  T = c(PPi, T_star)
+  lambda_vals = numeric(n)
+
+  # Compute the lambda_hat values
+  for (k in 1:n) {
+
+    lambda_val_max = -Inf
+
+    for (alpha in 1:k) {
+
+      lambda_val_min = Inf
+
+      for (beta in k:n) {
+        lambda_val_min = min(lambda_val_min,
+                              (beta - alpha + 1) / (T[beta + 1] - T[alpha]))
+      }
+
+      lambda_val_max = max(lambda_val_max, lambda_val_min)
+    }
+
+    lambda_vals[k] = lambda_val_max
+  }
+  return(lambda_vals)
+}
+```
+
+
+
+```{r test_funcs, eval=TRUE}
+# Define the Laplace test
+laplace_test <- function(PPi, T_star, n) {
+  # Compute the Laplace statistic
+  F = sum(PPi) / T_star
+
+  # Standardize the Laplace statistic
+  Z = (F - 0.5) * sqrt(12 * n)
+
+  return(Z)
+}
+
+# Define the Boswell test
+boswell_test <- function(PPi, T_star, n) {
+  # Compute the optimal non-decreasing estimate of the intensity
+  lambda_vals = lambda_hat(PPi, T_star, n)
+
+  # Compute the likelihood ratio statistic
+  W = 2 * (sum(log(lambda_vals)) + n * log(T_star / n))
+
+  return(W)
+}
+```
+
+
+## Power Study
+
+
+# Application to Real-World Data
+
