@@ -53,22 +53,15 @@
 
 
 
-Cox (1955) discussed the use of this test for testing ,B = 0 versus ,B > 0 
-in lamda(t) = aexp(Bt). Applying theorem 3 of Lehmann (1959, p. 136), this test can be shown to be uniformly most unbiased (UMPU) in this parametric setting.
-Bartholomew (1956) gave an expression for its power (also see Bates 1955) and showed that it compares favorably with the one-sided Kolmogorov-Smirnov test. Ascher and Feingold (1978) further discussed its use in the study of repairable systems.
+A FAIRE :
+Explain why we reject the null hypothesis if the test statistic observed is larger than the critical value (in
+term of maths)
 
+Annexes
 
+Analyse des courbes de puissance
 
-Figures :
+Conclusion
 
-Power comparison pour les différents scénarios
-Plot de N(t)
-Plot de la fonction rate
-
-
-Notebook :
-- Introduction
-Short introduction to nHPP, Laplace and Boswell tests
-
-- Numerical Simulations
-Generate data from nHPP, apply tests, compare power
+Code pour le test de boswell real-world data:
+Simplifier pour n trop grand

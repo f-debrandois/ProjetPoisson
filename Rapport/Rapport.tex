@@ -24,7 +24,7 @@ The rate, or intensity function $\lambda(t)$, represents the expected number of 
 Understanding and analyzing the behavior of this rate is crucial in diverse fields such as reliability engineering, healthcare, and environmental studies, as it helps identify patterns, predict future events, and optimize interventions \cite{ExampleIntervention}.
 Detecting increasing trends in the rate can be particularly important, for example, in monitoring system deterioration or identifying escalating risks in processes.
 Although various statistical methods have been proposed to identify increasing trends in NHPPs, existing treatments—such as those by Bain, Engelhardt, and Wright \cite{BainEngelhardtWright}—lack clarity and precision in both theoretical explanation and practical application.
-This study addresses these shortcomings by providing a detailed exploration of the Laplace test and Boswell’s likelihood ratio test.
+Our study addresses these shortcomings by providing a detailed exploration of the Laplace test and Boswell’s likelihood ratio test.
 The paper is structured in three parts: a theoretical discussion of the selected tests, numerical simulations comparing their performance, and an application to real-world data.
 
 
@@ -61,6 +61,11 @@ If the intensity $\lambda(t)$ is increasing, the arrival times $T_i$ are expecte
 Therefore, we reject $H_0$ if $F \geq s_{\alpha}$, where $s_{\alpha}$ is the critical threshold determined as: $s_{\alpha} = \frac{n}{2} + z_{1 - \alpha} \sqrt{\frac{n}{12}}$. \\
 with $z_{1 - \alpha}$ being the $(1 - \alpha)$-th quantile of the standard normal distribution. \\
 
+\noindent\textbf{P-value} \\
+The p-value measures the probability of obtaining a test statistic at least as extreme as the observed $F_{\text{obs}}$, under $H_0$.
+It is given by: \\
+$\hat{\alpha} = \mathbb{P}_{H_0}(F \geq F_{\text{obs}}) = 1 - \Phi(\frac{F_{\text{obs}} - \frac{n}{2}}{\sqrt{\frac{n}{12}}})$. \\
+
 \noindent\textbf{Power} \\
 The power of the test is the probability of rejecting $H_0$ when $H_1$ is true. \\
 $\pi(\lambda) = \mathbb{P}_{H_1}(F \geq s_{\alpha})$.
@@ -78,7 +83,7 @@ Consider the number $N_{T^*}$ of of "events" that have occurred in $[0, T^*]$, a
 \noindent\textbf{Likelihood Function Recap} \\
 The likelihood function for the observation times $T_1, \ldots, T_n$, conditioned on $N_{T^*} = n$, is given by:
 $$
-\mathcal{L}((N_t)_{t \in [0, T^*]}; \lambda) = \left(\prod_{i=1}^n \lambda(T_i)\right) \exp\left(-\int_0^{T^*} \lambda(t) dt\right)
+\mathcal{L}((T_i)_{1 \leq i \leq n}; \lambda) = \left(\prod_{i=1}^n \lambda(T_i)\right) \exp\left(-\int_0^{T^*} \lambda(t) dt\right)
 $$
 
 We assume that the intensity function $\lambda(t)$ is piecewise constant and non-decreasing between successive failure times $T_{i}$ and $T_{i+1}$.
@@ -152,7 +157,7 @@ Suppose there are $k$ change points, this implies there are $k + 1$ regions wher
 The possible ways that the $n$ observed failure times can be grouped into $k$ segments are given by the Stirling numbers of the first kind $s(n, k)$ \cite{StirlingNumbers}. \\
 We can therefore compute the survival function of the test statistic $W$ under $H_0$ by summing the probabilities of the $\chi^2(k+1)$ distribution for all possible numbers of segments $k$, weighted by the probability of having $k$ segments.
 \begin{equation}
-    \mathbb{P}_{H_0}(W \geq w) = \sum_{k=1}^{n} \frac{s(n, k)}{n!} \mathbb{P}(\chi^2(k+1) \geq w)
+    \mathbb{P}_{H_0}(W \geq w) \approx \sum_{k=1}^{n} \frac{s(n, k)}{n!} \mathbb{P}(\chi^2(k+1) \geq w)
     \label{eq:boswell_survival_function}
 \end{equation}
 
@@ -160,6 +165,11 @@ We can therefore compute the survival function of the test statistic $W$ under $
 \noindent\textbf{Decision Rule} \\
 The decision rule for the LRT is based on the critical threshold $w_{\alpha}$. 
 If $W \geq w_{\alpha}$, we reject $H_0$. $w_{\alpha}$ is determined as the $(1 - \alpha)$-th quantile of the previous distribution \eqref{eq:boswell_survival_function}. \\
+
+\noindent\textbf{P-value} \\
+The p-value is the probability of obtaining a test statistic at least as extreme as the observed $W_{\text{obs}}$ under $H_0$. 
+It is given by: \\
+$\hat{\alpha} = \mathbb{P}_{H_0}(W \geq W_{\text{obs}})$. \\
 
 \noindent\textbf{Power} \\
 The power of the test is the probability of rejecting $H_0$ when $H_1$ is true: \\
@@ -176,10 +186,6 @@ We simulate data from a Nonhomogeneous Poisson Process (NHPP) with various inten
 \begin{itemize}
     \item Exponential trend: $\lambda(t) = e^{\beta t}$, with $\beta \geq 0$
     \item Weibull trend: $\lambda(t) = \beta t^{\beta - 1}$, with $\beta \geq 1$
-    \item Step-function trend: $\lambda(t) = \begin{cases}
-        1 & \text{if } 0 \leq t \leq \tau \\
-        2 & \text{if } \tau < t \leq T^*
-    \end{cases}$
 \end{itemize}
 
 We generate the arrival times $T_1, \ldots, T_n \in [0, T^*]$ using the inverse transform method.
@@ -192,6 +198,9 @@ Then, we perform a Monte Carlo simulation to compare the power of the Laplace te
     \item The power $\pi$ of each test is estimated as the proportion of datasets where $H_0$ is rejected: $\pi = \frac{\text{Number of rejections of } H_0}{N}$.
 \end{enumerate}
 
+Boswell and Brunk \cite{Boswell1966} observed empirically that the large sample approximation for the LRT yields a true significance level somewhat larger than the nominal level.
+We verified this observation in our simulations using Monte Carlo simulations.
+Therefore, we adjusted the critical threshold for the LRT to ensure the true significance level matches the nominal level.
 
 
 
@@ -201,12 +210,12 @@ Then, we perform a Monte Carlo simulation to compare the power of the Laplace te
 
 \subsubsection{Exponential Trend}
 
-The power of the Laplace and Boswell tests is calculated for different values of $\beta$ (). \\
-The following figure shows the power curves for the two tests. \\
+The power of the Laplace and Boswell tests is calculated for different values of $T^*$. \\
+The figure \ref{fig:power_exponential_beta} shows the power curves of the two tests in function of $\beta$. \\
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.3\textwidth]{src/power_exponential.png}
-    \caption{Power Curves for Exponential Trend with Different $\beta$}
+    \includegraphics[width=0.4\textwidth]{src/power_exponential.png}
+    \caption{Power Curves for Exponential Trend}
     \label{fig:power_exponential_beta}
 \end{figure}
 
@@ -215,30 +224,19 @@ The following figure shows the power curves for the two tests. \\
 
 \subsubsection{Weibull Trend}
 
-The power of the Laplace and Boswell tests is calculated for different values of $\beta$ (). \\
-The power curves are plotted to compare the performance of the two tests. \\
+The power of the Laplace and Boswell tests is calculated for different values of $T^*$. \\
+We observed that the power of the both tests does not vary significantly with the time interval $T^*$.
+Therefore, we present the power curves for a fixed $T^*$.
+The figure \ref{fig:power_weibull_beta} shows the power curves of the two tests in function of $\beta$. \\
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.3\textwidth]{src/power_weibull.png}
-    \caption{Power Curves for Weibull Trend with Different $\beta$}
+    \includegraphics[width=0.4\textwidth]{src/power_weibull.png}
+    \caption{Power Curves for Weibull Trend}
     \label{fig:power_weibull_beta}
 \end{figure}
 
 \textit{ANALYSE}
 
-
-\subsubsection{Step-Function Trend}
-
-The power of the Laplace and Boswell tests is calculated for different values of $\tau$ (). \\
-The power curves are plotted to compare the performance of the two tests. \\
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.3\textwidth]{src/power_step_function.png}
-    \caption{Power Curves for Step-Function Trend with Different $\tau$}
-    \label{fig:power_step_function_tau}
-\end{figure}
-
-\textit{ANALYSE}
 
 Discussion of factors influencing the power of each test (sample size, intensity function shape, etc.). \\
 
@@ -249,6 +247,8 @@ Insights into when to prefer one test over the other.
 
 
 \section{Application to Real-World Data}
+
+We applied the Laplace test and Boswell's likelihood ratio test to a real-world dataset to detect an increasing trend in the intensity of a Poisson process.
 
 \subsection{Description of the Dataset}
 Danish Fire Insurance Claims. \\
@@ -268,7 +268,10 @@ Reflecting on how real-world results compare to the numerical simulations.
 
 
 \section{Conclusion}
-
+- Summarize aim
+- Summary of main result
+- Critical analysis of the result
+- Openings : future studies, implications, etc.
 
 
 
