@@ -13,6 +13,7 @@ library(dplyr)
 library(purrr)
 library(evir)
 library(fitdistrplus)
+library(lubridate)
 ```
 
 
@@ -55,7 +56,7 @@ We reject the null hypothesis if $W$ is larger than a critical value, indicating
 To simulate arrival times $T_1, T_2, \ldots, T_n$ for an NHPP with a given intensity function $\lambda(t)$ over $[0, T^*]$, we use the inverse transform method.
 
 ```{r simulhPP, eval=TRUE}
-# Define the simulation function for a Poisson Process with rate lambda = 1
+# Define the simulation function for a Poisson Process
 simulate_hpp <- function(n, T_star) {
   return(sort(runif(n, min = 0, max = T_star)))
 }
@@ -93,9 +94,6 @@ monte_carlo_simulation <- function(n, T_star, lambda_func, lambda_inv_func,
   return(count_reject / n_sim)
 }
 ```
-
-Explain why we reject the null hypothesis if the test statistic observed is larger than the critical value (in term of maths)
-
 
 We simulate data with various increasing intensity functions $\lambda(t)$:
 \begin{itemize}
@@ -136,7 +134,7 @@ lambda_inv_weibull <- function(beta) {
 
 We define the Laplace and Boswell tests for an increasing intensity trend.
 
-```{r tool1, eval=TRUE, include=FALSE}
+```{r tool1, eval=TRUE, include=TRUE}
 lambda_hat <- function(PPi, T_star, n) {
   times = c(PPi, T_star)
   lambda_vals = numeric(n)
@@ -191,7 +189,7 @@ boswell_test <- function(times, T_star, n) {
 
 We set the critical values for the Laplace and Boswell tests based on the significance level $\alpha$.
 
-```{r tool2, eval=TRUE, include=FALSE}
+```{r tool2, eval=TRUE, include=TRUE}
 stirling_number <- function(n, k) {
   if (k <= 0 || k > n) {
     return(0)
@@ -204,11 +202,29 @@ stirling_number <- function(n, k) {
   return(stirling_number(n - 1, k - 1) + (n - 1) * stirling_number(n - 1, k))
 }
 
-boswell_survival_func <- function(w, n) {
-  total_sum <- 0
-  for (k in 1:n) {
-    total_sum <- total_sum + ((1 - pchisq(q=w, df=k + 1)) * (stirling_number(n, k) / factorial(n)))
+stirling_number_matrix <- function(n_max) {
+  S <- matrix(0, nrow = n_max, ncol = n_max)
+  S[1, 1] <- 1
+
+  for (n in 2:n_max) {
+    for (k in 1:n) {
+      if (k == 1) {
+        S[n, k] <- (n - 1) * S[n - 1, k]
+      } else {
+        S[n, k] <- S[n - 1, k - 1] + (n - 1) * S[n - 1, k]
+      }
+    }
   }
+  return(S)
+}
+
+boswell_survival_func <- function(w, n) {
+  # Compute the Stirling numbers of the first kind
+  S <- stirling_number_matrix(n)
+
+  # Compute the survival function
+  k_values <- 1:n
+  total_sum <- sum((1 - pchisq(w, df = k_values + 1)) * S[n, k_values] / factorial(n))
   return(total_sum)
 }
 ```
@@ -230,7 +246,7 @@ Boswell and Brunk (1969) observed empirically that the large sample approximatio
 We can empirically verify this observation in R using Monte Carlo simulations.
 The goal is to compare the true significance level of the LRT when using different nominal levels to see which one yields an actual significance level closer to 0.05.
 
-```{r empirical_alpha, eval=TRUE, include=FALSE}
+```{r empirical_alpha, eval=TRUE, include=TRUE}
 # Monte Carlo simulation to estimate the true significance level
 monte_carlo_significance <- function(n, T_star, nominal_level, n_sim = 5000) {
   threshold <- boswell_critical_value(nominal_level, n)
@@ -439,8 +455,6 @@ legend("bottomright",
        lwd = 1.5)
 ```
 
-COMMENTARY
-
 
 ### Weibull Trend
 
@@ -605,7 +619,7 @@ legend("bottomright",
        lwd = 1.5)
 ```
 
-COMMENTARY
+
 
 # Application to Real-World Data
 
@@ -614,8 +628,12 @@ We apply the Laplace and Boswell tests to a real-world dataset to detect an incr
 The dataset consists of the number of fire insurance claims in Denmark from 1980 to 1990.
 We are primarily interested in the arrival times of the claims (the time column) to detect if the rate of claims is increasing over time.
 
+From this dataset, we were able to extract the times thanks to the library providing the database.
+Each time corresponds to the date, day and time of the event.
+So we converted all these times into days, and then calculated a cumulative sum of the latter.
+For the moment, this allows us to display the start of the process, unchanged for the time being.
+
 ```{r Danish_data, eval=TRUE}
-library(lubridate)
 # Load the Danish dataset
 data(danish)
 df_data <- data.frame(Times = attr(danish, "times"))
@@ -633,7 +651,7 @@ plot.PP(cumsum(times_intervals))
 
 We adjust an exponential distribution to the time intervals to check if the inter-arrival times follow an exponential distribution.
 
-```{r Danish_fit, eval=TRUE, echo=FALSE}
+```{r Danish_fit, eval=TRUE, echo=FALSE, fig.width=10, fig.height=5}
 # Fit an exponential distribution to the time intervals
 fit <- fitdist(times_intervals, "exp")
 
@@ -645,33 +663,32 @@ curve(dexp(x, rate = fit$estimate), col = "red", lwd = 2, add = TRUE)
 legend("topright", legend = c("Data", "Fitted Exponential"), col = c("skyblue", "red"), lwd = 2)
 ```
 
-COMMENTARY
-
 
 We then check the autocorrelation of the time intervals to assess the independence of the time intervals.
 
-```{r Danish_autocorr, eval=TRUE, echo=FALSE}
+```{r Danish_autocorr, eval=TRUE, echo=FALSE, fig.width=10, fig.height=5}
 # Autocorrelation of the time intervals
 acf(times_intervals, main = "Autocorrelation of Time Intervals")
 ```
 
-COMMENTARY
 
-We clean the data by removing duplicate time values and computing the new time intervals.
+We ensure that the Poisson process is simple by removing duplicate time values.
 
-```{r Danish_clean, eval=TRUE}
-# Cleaning the data
+```{r Danish_duplicates, eval=TRUE}
+# Remove duplicate time values
 new_times_intervals <- times_intervals[times_intervals != 0]
+```
 
+```{r Danish_parameters, eval=TRUE, include=FALSE}
 # Variable declarations
 times <- cumsum(new_times_intervals)
 T_max <- max(times)
-n <- length(new_times_intervals)
+n <- length(times)
 ```
 
-```{r tool3, eval=TRUE, include=FALSE}
+```{r tool3, eval=TRUE, include=TRUE}
 # Function to generate a matrix of log Stirling numbers of the first kind
-generate_log_stirling_matrix <- function(n_max) {
+stirling_number_log_matrix <- function(n_max) {
   log_S <- matrix(-Inf, nrow = n_max, ncol = n_max)  # Initialize with -Inf (log(0))
   log_S[1, 1] <- 0  # log(1) = 0, base case
 
@@ -684,7 +701,6 @@ generate_log_stirling_matrix <- function(n_max) {
       }
     }
   }
-
   return(log_S)
 }
 
@@ -692,23 +708,20 @@ generate_log_stirling_matrix <- function(n_max) {
 log_factorial <- function(n) {
   sum(log(1:n))
 }
-```
 
-
-```{r tool4, eval=TRUE, include=FALSE}
 boswell_log_survival_func <- function(w, n) {
   # Ensure n does not exceed the precomputed matrix size
-  log_stirling_matrix <- generate_log_stirling_matrix(n)
+  log_stirling_matrix <- stirling_number_log_matrix(n)
 
   # Compute the log survival function
-  log_total_sum <- -Inf  # Initialize to log(0)
+  total_sum <- 0
 
   for (k in 1:n) {
     log_term <- log(1 - pchisq(w, df = k + 1)) + log_stirling_matrix[n, k] - log_factorial(n)
-    log_total_sum <- log(exp(log_total_sum) + exp(log_term))
+    total_sum <- total_sum + exp(log_term)
   }
 
-  return(exp(log_total_sum))  # Convert back from log scale
+  return(total_sum)
 }
 ```
 
@@ -729,15 +742,12 @@ p_val <- 1 - pnorm(Z_obs)
 print(p_val)
 ```
 
-COMMENTARY
-
 
 ### Boswell Test
 
 ```{r Danish_Boswell, eval=FALSE}
 # Boswell Test
 W_obs <- boswell_test(times, T_max, n)
-print(W_obs)
 
 # Compute the p-value
 p_val <- boswell_log_survival_func(W_obs, n)

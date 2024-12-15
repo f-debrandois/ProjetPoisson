@@ -54,12 +54,9 @@
 
 
 A FAIRE :
-Explain why we reject the null hypothesis if the test statistic observed is larger than the critical value (in
-term of maths)
 
 Annexes
 
-Analyse des courbes de puissance
 
 Conclusion
 
